@@ -1,0 +1,22 @@
+# Dockerfile for Development
+
+FROM python:3.11-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Install development dependencies
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# Copy the application code
+COPY . .
+
+# Mount volume for hot reloading (to be set in docker-compose)
+
+# Health check to validate the application is running
+HEALTHCHECK --interval=30s --timeout=30s --retries=3 \
+  CMD curl -f http://127.0.0.1:8000/health/ || exit 1
+
+# Command to run the app (this might change based on your project)
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
